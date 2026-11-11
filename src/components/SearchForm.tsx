@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { homeHref } from "@/lib/links";
+import { homeHref, withBase } from "@/lib/links";
 
 /** Hero search box. Submits as a normal GET form; the results section reads the query string. */
 export default function SearchForm({ lang, t }: { lang: string; t: Dictionary }) {
@@ -14,7 +14,7 @@ export default function SearchForm({ lang, t }: { lang: string; t: Dictionary })
     <form
       // Remount when the URL changes so defaultValue reflects the current search.
       key={`${q}|${bl}`}
-      action={`${homeHref(lang)}#results`}
+      action={withBase(`${homeHref(lang)}#results`)}
       className="mt-8 flex flex-col gap-2 rounded-2xl bg-white p-2 shadow-2xl shadow-black/30 sm:flex-row sm:items-center"
     >
       <div className="flex flex-1 items-center gap-2 px-3">

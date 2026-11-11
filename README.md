@@ -8,6 +8,8 @@
 
 A free, bilingual (Arabic / English) e-library: search 60,000+ public-domain books, browse a hand-picked shelf of Arabic classics, download ready-to-read files, and keep your own reading list — no sign-up needed.
 
+[![Live demo](https://img.shields.io/badge/Live%20demo-basmalah--tarq.github.io%2FMidad-0F2A24?style=for-the-badge)](https://basmalah-tarq.github.io/Midad/)
+
 ![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
@@ -105,6 +107,14 @@ npm run build
 ```
 
 The site is written to `out/`. Upload the **contents** of `out/` to your host's web root (for InfinityFree: `htdocs/`). The included `.htaccess` handles the 404 page and caching.
+
+To serve it from a sub-folder (like GitHub Pages at `/Midad/`), set the base path when building:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/Midad npm run build
+```
+
+The live demo is the `gh-pages` branch of this repository.
 
 ### Adding an Arabic book
 
