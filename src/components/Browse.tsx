@@ -24,7 +24,7 @@ const TOPIC_STYLE: Record<Topic, { icon: string; bg: string }> = {
   history: { icon: "🏛️", bg: "from-amber-500/20 to-amber-500/5" },
   science: { icon: "🔭", bg: "from-sky-500/15 to-sky-500/5" },
   children: { icon: "🧸", bg: "from-pink-400/20 to-pink-400/5" },
-  poetry: { icon: "🪶", bg: "from-violet-500/15 to-violet-500/5" },
+  poetry: { icon: "✒️", bg: "from-violet-500/15 to-violet-500/5" },
   philosophy: { icon: "🦉", bg: "from-stone-500/20 to-stone-500/5" },
   adventure: { icon: "🧭", bg: "from-emerald-500/15 to-emerald-500/5" },
   religion: { icon: "🕊️", bg: "from-teal-500/15 to-teal-500/5" },
