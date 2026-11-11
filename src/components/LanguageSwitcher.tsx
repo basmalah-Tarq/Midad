@@ -16,8 +16,12 @@ export default function LanguageSwitcher({ lang, label }: { lang: Locale; label:
     <Link
       href={href}
       hrefLang={other}
-      className="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-semibold hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-800"
+      className="flex items-center gap-2 rounded-full border border-white/20 px-4 py-1.5 text-sm font-semibold transition hover:border-[#e2b65f] hover:text-[#e2b65f]"
     >
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" />
+      </svg>
       {label}
     </Link>
   );

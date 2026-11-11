@@ -1,37 +1,42 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
-import type { Dictionary } from "@/i18n/dictionaries";
-import { coverUrl, displayName, type Book } from "@/lib/gutendex";
+import { likeLabels, type Dictionary } from "@/i18n/dictionaries";
+import type { LibraryBook } from "@/lib/library";
+import BookCover from "./BookCover";
+import LikeButton from "./LikeButton";
 
-export default function BookCard({ book, lang, t }: { book: Book; lang: Locale; t: Dictionary }) {
-  const cover = coverUrl(book);
-  const author = book.authors[0] ? displayName(book.authors[0]) : t.unknownAuthor;
-  const downloads = new Intl.NumberFormat(lang).format(book.download_count);
+export default function BookCard({ book, lang, t }: { book: LibraryBook; lang: Locale; t: Dictionary }) {
+  const author = book.authors[0]?.name ?? t.unknownAuthor;
 
   return (
-    <Link
-      href={`/${lang}/book/${book.id}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-stone-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg dark:border-stone-700 dark:bg-stone-900"
-    >
-      <div className="aspect-[2/3] w-full bg-stone-100 dark:bg-stone-800">
-        {cover ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={cover} alt={book.title} loading="lazy" className="h-full w-full object-cover" />
-        ) : (
-          <div className="flex h-full items-center justify-center p-4 text-center text-sm text-stone-500">
+    <div className="group relative flex flex-col">
+      <Link href={`/${lang}/book/${book.id}`} className="flex flex-col gap-3">
+        <div className="relative transition duration-300 group-hover:-translate-y-2 group-hover:rotate-[-1deg]">
+          <BookCover book={book} className="group-hover:shadow-[0_22px_40px_-12px_rgba(0,0,0,0.55)]" />
+          {book.downloads !== undefined && (
+            <span className="absolute bottom-2 end-2 flex items-center gap-1 rounded-full bg-black/65 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur">
+              <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
+                <path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14" />
+              </svg>
+              {new Intl.NumberFormat(lang, { notation: "compact" }).format(book.downloads)}
+            </span>
+          )}
+        </div>
+        <div className="px-0.5">
+          <h3 dir="auto" className="line-clamp-2 font-semibold leading-snug transition group-hover:text-gold">
             {book.title}
-          </div>
-        )}
-      </div>
-      <div className="flex flex-1 flex-col gap-1 p-3">
-        <h3 className="line-clamp-2 font-bold leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400">
-          {book.title}
-        </h3>
-        <p className="line-clamp-1 text-sm text-stone-600 dark:text-stone-400">{author}</p>
-        <p className="mt-auto pt-1 text-xs text-stone-500">
-          {downloads} {t.downloadsCount}
-        </p>
-      </div>
-    </Link>
+          </h3>
+          <p dir="auto" className="mt-0.5 line-clamp-1 text-sm text-muted">
+            {author}
+          </p>
+        </div>
+      </Link>
+      <LikeButton
+        book={{ id: book.id, title: book.title, author, cover: book.cover }}
+        labels={likeLabels(t)}
+        revealOnHover
+        className="absolute end-2 top-2 z-10 transition group-hover:-translate-y-2"
+      />
+    </div>
   );
 }

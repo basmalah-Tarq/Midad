@@ -10,13 +10,23 @@ A bilingual (Arabic / English) e-library for searching free books and downloadin
 - 🗂️ تصنيفات: روايات، تاريخ، علوم، أطفال، شعر، فلسفة...
 - ⬇️ تحميل مباشر بصيغة **EPUB** و **Kindle (MOBI)** و **PDF** و **TXT**
 - 🌐 واجهة عربية (من اليمين لليسار) وإنجليزية مع زر تبديل
-- 🌙 وضع ليلي تلقائي
+- 🌙 زر للوضع الليلي / النهاري يحفظ اختيارك
+- 📜 مكتبة «روائع الأدب العربي»: ابن خلدون، المتنبي، جبران، المنفلوطي، شوقي، جرجي زيدان...
 
-## مصدر الكتب | Book source
+## مصادر الكتب | Book sources
 
-الكتب من [Project Gutenberg](https://www.gutenberg.org) عبر [Gutendex API](https://gutendex.com)، وكلها في **الملك العام** ومتاحة قانونياً.
+| المصدر | المحتوى |
+|---|---|
+| [Project Gutenberg](https://www.gutenberg.org) عبر [Gutendex API](https://gutendex.com) | أكثر من 60 ألف كتاب عالمي، أغلبها إنجليزي |
+| [Internet Archive](https://archive.org) | قائمة مختارة يدوياً من الكتب العربية الكلاسيكية في [`src/data/arabic-books.ts`](src/data/arabic-books.ts) |
 
-Books come from Project Gutenberg via the Gutendex API. All are in the public domain.
+كل الكتب **في الملك العام** ومتاحة قانونياً. الكتب العربية مختارة لمؤلفين توفوا قبل أكثر من 70 سنة. تصنيفات الترخيص على Internet Archive يكتبها الرافعون أنفسهم وفيها أخطاء كثيرة، لهيك ما بنعرض نتائج بحث الأرشيف تلقائياً، وبنضيف الكتب يدوياً بعد التحقق.
+
+Books come from Project Gutenberg (via Gutendex) and a hand-picked list of Arabic classics on the Internet Archive. All are in the public domain. Archive license tags are self-reported and often wrong, so Arabic books are added by hand rather than pulled from search.
+
+### إضافة كتاب عربي | Adding an Arabic book
+
+أضف عنصراً جديداً إلى `ARABIC_BOOKS` في `src/data/arabic-books.ts` بمعرّف الأرشيف (`archiveId`) واسم الملف بالضبط داخل العنصر.
 
 ## التقنيات | Tech stack
 

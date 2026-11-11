@@ -1,22 +1,21 @@
-import { DOWNLOAD_FORMATS, findFormatUrl, getBook } from "@/lib/gutendex";
+import { DOWNLOAD_FORMATS, getLibraryBook, isAllowedFileHost } from "@/lib/library";
 
-// Streams a book file from Project Gutenberg back to the browser as a ready-to-save
-// attachment. Only URLs listed by Gutendex for this book are fetched, so this is not
-// an open proxy.
+// Streams a book file back to the browser as a ready-to-save attachment. Only file
+// URLs that belong to a known book are fetched, so this is not an open proxy.
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const formatKey = new URL(req.url).searchParams.get("format") ?? "epub";
   const format = DOWNLOAD_FORMATS.find((f) => f.key === formatKey);
 
-  if (!format || !/^\d+$/.test(id)) {
+  if (!format || !/^(\d+|ar-[a-z0-9-]+)$/.test(id)) {
     return new Response("Bad request", { status: 400 });
   }
 
-  const book = await getBook(Number(id));
+  const book = await getLibraryBook(id);
   if (!book) return new Response("Book not found", { status: 404 });
 
-  const fileUrl = findFormatUrl(book, format.mime);
-  if (!fileUrl || !new URL(fileUrl).hostname.endsWith("gutenberg.org")) {
+  const fileUrl = book.files[format.key];
+  if (!fileUrl || !isAllowedFileHost(fileUrl)) {
     return new Response("Format not available", { status: 404 });
   }
 
