@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { likeLabels, type Dictionary } from "@/i18n/dictionaries";
 import type { LibraryBook } from "@/lib/library";
+import { bookHref } from "@/lib/links";
 import BookCover from "./BookCover";
 import LikeButton from "./LikeButton";
 
@@ -10,7 +11,7 @@ export default function BookCard({ book, lang, t }: { book: LibraryBook; lang: L
 
   return (
     <div className="group relative flex flex-col">
-      <Link href={`/${lang}/book/${book.id}`} className="flex flex-col gap-3">
+      <Link href={bookHref(lang, book.id)} className="flex flex-col gap-3">
         <div className="relative transition duration-300 group-hover:-translate-y-2 group-hover:rotate-[-1deg]">
           <BookCover book={book} className="group-hover:shadow-[0_22px_40px_-12px_rgba(0,0,0,0.55)]" />
           {book.downloads !== undefined && (

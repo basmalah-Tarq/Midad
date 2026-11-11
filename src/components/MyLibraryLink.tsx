@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { myLibraryHref } from "@/lib/links";
 import { useLibrary } from "@/lib/userLibrary";
 
 export default function MyLibraryLink({ lang, label }: { lang: string; label: string }) {
   const { books } = useLibrary();
   const count = Object.values(books).filter((b) => b.likedAt || b.status).length;
-  const active = usePathname() === `/${lang}/me`;
+  const active = usePathname().replace(/\/$/, "") === `/${lang}/me`;
 
   return (
     <Link
-      href={`/${lang}/me`}
+      href={myLibraryHref(lang)}
       className={`relative flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition sm:px-4 ${
         active
           ? "border-[#e2b65f] bg-[#e2b65f] text-[#1f1b16]"

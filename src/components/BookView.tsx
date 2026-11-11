@@ -1,36 +1,58 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import BookActions, { DownloadLink } from "@/components/BookActions";
-import BookCover from "@/components/BookCover";
-import { isLocale } from "@/i18n/config";
-import { getDictionary, likeLabels } from "@/i18n/dictionaries";
-import { DOWNLOAD_FORMATS, getLibraryBook } from "@/lib/library";
+"use client";
 
-type Props = { params: Promise<{ lang: string; id: string }> };
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import type { Locale } from "@/i18n/config";
+import { likeLabels, type Dictionary } from "@/i18n/dictionaries";
+import { DOWNLOAD_FORMATS, getLibraryBook, type LibraryBook } from "@/lib/library";
+import { homeHref } from "@/lib/links";
+import BookActions, { DownloadLink } from "./BookActions";
+import BookCover from "./BookCover";
 
 const FORMAT_ICON: Record<string, string> = { epub: "📱", kindle: "📘", pdf: "🖨️", txt: "📄" };
 
-async function load(params: Props["params"]) {
-  const { lang, id } = await params;
-  if (!isLocale(lang)) notFound();
-  const book = await getLibraryBook(decodeURIComponent(id));
-  if (!book) notFound();
-  return { lang, book, t: getDictionary(lang) };
-}
+type State = { id: string; book: LibraryBook | null } | null;
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { book } = await load(params);
-  return { title: book.title };
-}
+export default function BookView({ lang, t }: { lang: Locale; t: Dictionary }) {
+  const id = useSearchParams().get("id") ?? "";
+  const [state, setState] = useState<State>(null);
 
-export default async function BookPage({ params }: Props) {
-  const { lang, book, t } = await load(params);
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    getLibraryBook(id).then((book) => {
+      if (!cancelled) setState({ id, book });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  const ready = !id || state?.id === id;
+  const book = id && state?.id === id ? state.book : null;
+
+  useEffect(() => {
+    if (book) document.title = `${book.title} | ${t.siteName}`;
+  }, [book, t.siteName]);
+
+  if (!ready) return <BookSkeleton />;
+  if (!book) {
+    return (
+      <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
+        <div className="mb-4 text-6xl">📕</div>
+        <p className="text-lg text-muted">{t.noResults}</p>
+        <Link href={homeHref(lang)} className="mt-6 font-semibold text-gold hover:underline">
+          {t.back}
+        </Link>
+      </div>
+    );
+  }
+
   const formats = DOWNLOAD_FORMATS.filter((f) => book.files[f.key]);
   const languageNames = new Intl.DisplayNames([lang], { type: "language" });
   const fmt = new Intl.NumberFormat(lang);
   const sep = lang === "ar" ? "، " : ", ";
-
   const authors = book.authors.length
     ? book.authors.map((a) => a.name + (a.years ? ` (${a.years})` : "")).join(sep)
     : t.unknownAuthor;
@@ -57,7 +79,7 @@ export default async function BookPage({ params }: Props) {
         <div className="absolute inset-0 bg-gradient-to-b from-forest/40 to-forest" />
 
         <div className="relative mx-auto max-w-6xl px-4 pb-14 pt-8">
-          <Link href={`/${lang}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#e2b65f] hover:underline">
+          <Link href={homeHref(lang)} className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#e2b65f] hover:underline">
             <span aria-hidden>{lang === "ar" ? "→" : "←"}</span> {t.back}
           </Link>
 
@@ -114,7 +136,7 @@ export default async function BookPage({ params }: Props) {
                   book={snapshot}
                   format={t.formats[f.key]}
                   toastMessage={t.toastDownload}
-                  href={`/api/download/${book.id}?format=${f.key}`}
+                  href={book.files[f.key]!}
                   className="group flex items-center gap-3 rounded-2xl border border-line bg-paper p-4 transition hover:-translate-y-0.5 hover:border-gold hover:shadow-md"
                 >
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold-soft text-xl">
@@ -181,5 +203,21 @@ export default async function BookPage({ params }: Props) {
         </div>
       </div>
     </article>
+  );
+}
+
+function BookSkeleton() {
+  return (
+    <div aria-busy="true">
+      <div className="bg-forest">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-10 px-4 py-16 md:flex-row md:items-end">
+          <div className="aspect-[2/3] w-52 animate-pulse rounded-md bg-white/10 sm:w-60" />
+          <div className="flex w-full flex-1 flex-col gap-4">
+            <div className="h-10 w-3/4 animate-pulse rounded-lg bg-white/10" />
+            <div className="h-5 w-1/2 animate-pulse rounded bg-white/10" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

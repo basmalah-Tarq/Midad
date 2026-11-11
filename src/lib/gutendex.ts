@@ -59,23 +59,27 @@ export async function searchBooks(opts: {
   params.set("languages", opts.languages || "ar,en");
   if (opts.page && opts.page > 1) params.set("page", String(opts.page));
 
-  try {
-    const res = await fetch(`${API}/?${params}`, { next: { revalidate: 3600 } });
-    if (!res.ok) return null;
-    return (await res.json()) as BookList;
-  } catch {
-    return null;
-  }
+  return getJson<BookList>(`${API}/?${params}`);
 }
 
 export async function getBook(id: number): Promise<Book | null> {
-  try {
-    const res = await fetch(`${API}/${id}/`, { next: { revalidate: 86400 } });
-    if (!res.ok) return null;
-    return (await res.json()) as Book;
-  } catch {
-    return null;
+  // The list endpoint filtered by id is more reliable than /books/{id}/, which
+  // intermittently answers 503 without CORS headers (breaking browser fetches).
+  const data = await getJson<BookList>(`${API}/?ids=${id}`);
+  return data?.results.find((b) => b.id === id) ?? null;
+}
+
+/** GET JSON with a timeout and one retry; Gutendex is occasionally slow or flaky. */
+async function getJson<T>(url: string, attempts = 2): Promise<T | null> {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(25000) });
+      if (res.ok) return (await res.json()) as T;
+    } catch {
+      // timeout or network error: retry
+    }
   }
+  return null;
 }
 
 export function coverUrl(book: Book): string | undefined {

@@ -1,66 +1,137 @@
-# 📚 المكتبة الإلكترونية | E-Library
+<div align="center">
 
-موقع مكتبة إلكترونية ثنائي اللغة (عربي / إنجليزي) للبحث عن الكتب المجانية وتحميلها مباشرة بصيغ جاهزة.
+<img src="src/app/icon.svg" alt="Midad logo" width="96">
 
-A bilingual (Arabic / English) e-library for searching free books and downloading them as ready-to-use files.
+# Midad · مِداد — Bilingual E-Library
 
-## المميزات | Features
+**Discover a world of books. Download them in one click.**
 
-- 🔍 البحث باسم الكتاب أو المؤلف، وفلترة حسب لغة الكتاب
-- 🗂️ تصنيفات: روايات، تاريخ، علوم، أطفال، شعر، فلسفة...
-- ⬇️ تحميل مباشر بصيغة **EPUB** و **Kindle (MOBI)** و **PDF** و **TXT**
-- 🌐 واجهة عربية (من اليمين لليسار) وإنجليزية مع زر تبديل
-- 🌙 زر للوضع الليلي / النهاري يحفظ اختيارك
-- 📜 مكتبة «روائع الأدب العربي»: ابن خلدون، المتنبي، جبران، المنفلوطي، شوقي، جرجي زيدان...
+A free, bilingual (Arabic / English) e-library: search 60,000+ public-domain books, browse a hand-picked shelf of Arabic classics, download ready-to-read files, and keep your own reading list — no sign-up needed.
 
-## مصادر الكتب | Book sources
+![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-0F2A24)
 
-| المصدر | المحتوى |
+</div>
+
+---
+
+## ✨ Highlights
+
+- **60,000+ free books** — live search over Project Gutenberg by title or author, with categories and paging.
+- **Arabic classics shelf** — 30 hand-picked public-domain works (Ibn Khaldun, al-Mutanabbi, Gibran, al-Manfaluti, Shawqi, Jurji Zaydan…), each verified to download.
+- **Smart Arabic search** — ignores hamza, diacritics and ة/ه, ى/ي differences, so `الف ليله` finds «ألف ليلة وليلة».
+- **Ready-to-read downloads** — EPUB, Kindle, PDF and TXT where available, plus "read online".
+- **My Library** — favorites ❤️, reading status (want to read / reading / finished), download history and an activity timeline, saved in the browser.
+- **Arabic & English (RTL)** and **Light / Dark mode** that remembers your choice.
+- **Static site** — builds to plain HTML/CSS/JS, so it runs on any host, including free PHP hosting like InfinityFree.
+
+## 📸 Screenshots
+
+| Arabic · Light | Arabic · Dark | English |
+|---|---|---|
+| ![Landing Arabic light](docs/screenshots/web-landing-ar-light-1440.png) | ![Landing Arabic dark](docs/screenshots/web-landing-ar-dark-1440.png) | ![Landing English](docs/screenshots/web-landing-en-light-1440.png) |
+
+| Arabic classics | Book page | My Library |
+|---|---|---|
+| ![Arabic classics](docs/screenshots/web-arabic-classics-ar-light-1440.png) | ![Book page](docs/screenshots/web-book-ar-dark-1440.png) | ![My Library](docs/screenshots/web-my-library-ar-light-1440.png) |
+
+| Mobile · Dark | Mobile · My Library |
 |---|---|
-| [Project Gutenberg](https://www.gutenberg.org) عبر [Gutendex API](https://gutendex.com) | أكثر من 60 ألف كتاب عالمي، أغلبها إنجليزي |
-| [Internet Archive](https://archive.org) | قائمة مختارة يدوياً من الكتب العربية الكلاسيكية في [`src/data/arabic-books.ts`](src/data/arabic-books.ts) |
+| <img src="docs/screenshots/mobile-landing-ar-dark-390.png" width="260"> | <img src="docs/screenshots/mobile-my-library-ar-light-390.png" width="260"> |
 
-كل الكتب **في الملك العام** ومتاحة قانونياً. الكتب العربية مختارة لمؤلفين توفوا قبل أكثر من 70 سنة. تصنيفات الترخيص على Internet Archive يكتبها الرافعون أنفسهم وفيها أخطاء كثيرة، لهيك ما بنعرض نتائج بحث الأرشيف تلقائياً، وبنضيف الكتب يدوياً بعد التحقق.
+## 🏗️ Architecture
 
-Books come from Project Gutenberg (via Gutendex) and a hand-picked list of Arabic classics on the Internet Archive. All are in the public domain. Archive license tags are self-reported and often wrong, so Arabic books are added by hand rather than pulled from search.
+```
+                ┌────────────────────────────────────┐
+Browser ───────▶│  Static site (HTML / CSS / JS)      │
+                │  /ar/  /en/  · book · my library    │
+                └──────┬──────────────┬──────────────┘
+                       │              │
+        search & books │              │ favorites, reading status,
+          (fetch, CORS)│              │ activity  →  localStorage
+                       ▼              ▼
+     ┌──────────────────────┐   ┌──────────────────────────────┐
+     │ Gutendex API          │   │ Curated Arabic catalog         │
+     │ (Project Gutenberg)   │   │ src/data/arabic-books.ts       │
+     └──────────────────────┘   │ files & covers → Internet Archive│
+                                └──────────────────────────────┘
+```
 
-### إضافة كتاب عربي | Adding an Arabic book
+## 🧰 Tech stack
 
-أضف عنصراً جديداً إلى `ARABIC_BOOKS` في `src/data/arabic-books.ts` بمعرّف الأرشيف (`archiveId`) واسم الملف بالضبط داخل العنصر.
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router, static export), React 19, TypeScript |
+| Styling | Tailwind CSS 4, El Messiri + IBM Plex Sans Arabic fonts |
+| Data | Gutendex API (Project Gutenberg), Internet Archive |
+| Storage | Browser localStorage (no accounts, no database) |
+| Hosting | Any static host — InfinityFree, Vercel, Netlify, GitHub Pages |
 
-## التقنيات | Tech stack
+## 📁 Project structure
 
-- [Next.js 15](https://nextjs.org) (App Router) + TypeScript
-- Tailwind CSS 4
-- خط Cairo
+```
+ebook-library/
+├── src/
+│   ├── app/
+│   │   ├── [lang]/            # Pages for each language (ar / en)
+│   │   │   ├── page.tsx       # Home: hero, search, categories, results
+│   │   │   ├── book/          # Book page (reads ?id=)
+│   │   │   └── me/            # My Library
+│   │   └── icon.svg           # Logo / favicon
+│   ├── components/            # BookCard, Browse, BookView, MyLibrary, LikeButton…
+│   ├── data/arabic-books.ts   # Curated Arabic classics
+│   ├── i18n/                  # Arabic / English dictionaries
+│   └── lib/                   # Gutendex client, library model, user library store
+├── public/                    # Root redirect, .htaccess for Apache hosts
+└── docs/screenshots/          # Images used in this README
+```
 
-## التشغيل | Getting started
+## 🚀 Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-ثم افتح | then open: http://localhost:3000
+Open http://localhost:3000/ar/
 
-## هيكل المشروع | Project structure
+### Build & deploy (static)
 
-```
-src/
-├── app/
-│   ├── [lang]/              # صفحات الموقع لكل لغة (ar / en)
-│   │   ├── page.tsx         # الصفحة الرئيسية: بحث + تصنيفات + نتائج
-│   │   └── book/[id]/       # صفحة الكتاب وأزرار التحميل
-│   └── api/download/[id]/   # تحميل ملف الكتاب كمرفق جاهز
-├── components/              # BookCard, LanguageSwitcher
-├── i18n/                    # إعدادات اللغات والترجمات
-├── lib/gutendex.ts          # الاتصال بـ Gutendex API
-└── middleware.ts            # تحويل "/" إلى "/ar"
+```bash
+npm run build
 ```
 
-## الخطوات القادمة | Roadmap
+The site is written to `out/`. Upload the **contents** of `out/` to your host's web root (for InfinityFree: `htdocs/`). The included `.htaccess` handles the 404 page and caching.
 
-- [ ] لوحة تحكم لرفع كتب عربية خاصة
-- [ ] حسابات مستخدمين وقائمة مفضلة
-- [ ] قارئ كتب داخل الموقع
-- [ ] النشر على Vercel
+### Adding an Arabic book
+
+Add an entry to `ARABIC_BOOKS` in `src/data/arabic-books.ts` with the Internet Archive item id (`archiveId`) and the exact file name inside it. Only add works whose authors died more than 70 years ago.
+
+## 🇵🇸 بالعربي
+
+**مِداد** مكتبة إلكترونية مجانية بالعربي والإنجليزي.
+
+- بحث بين أكثر من **60 ألف كتاب** من مشروع غوتنبرغ، حسب العنوان أو المؤلف أو التصنيف.
+- رف **«روائع الأدب العربي»**: 30 كتاباً كلاسيكياً في الملك العام، منها مقدمة ابن خلدون، وديوان المتنبي، وجبران، والمنفلوطي، وشوقي، وجرجي زيدان.
+- بحث عربي ذكي يتجاهل الهمزات والتشكيل.
+- تحميل الكتب بصيغة EPUB و Kindle و PDF و TXT.
+- **مكتبتي**: المفضلة، وحالة القراءة، وسجل التحميلات والنشاط، محفوظة على جهازك بدون تسجيل.
+- **الوضع الفاتح والداكن** ويعمل على الكمبيوتر والموبايل.
+
+كل الكتب في **الملك العام** ومتاحة قانونياً.
+
+## 📚 Book sources
+
+- [Project Gutenberg](https://www.gutenberg.org) via [Gutendex](https://gutendex.com)
+- [Internet Archive](https://archive.org) for the curated Arabic shelf. Archive license tags are self-reported and often wrong, so Arabic books are added by hand after checking the author's dates.
+
+## 👩‍💻 Author
+
+**Basmalah Qaseem** ([@basmalah-Tarq](https://github.com/basmalah-Tarq))
+
+## 📄 License
+
+Released under the [MIT License](LICENSE).

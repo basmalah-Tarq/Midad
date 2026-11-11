@@ -11,6 +11,7 @@ import {
   type LibraryEntry,
   type ReadingStatus,
 } from "@/lib/userLibrary";
+import { bookHref, homeHref } from "@/lib/links";
 import BookCover from "./BookCover";
 import LikeButton from "./LikeButton";
 
@@ -150,7 +151,7 @@ export default function MyLibrary({ lang, t }: { lang: string; t: Dictionary }) 
               <div className="mb-3 text-5xl">{TABS.find((x) => x.key === tab)?.icon}</div>
               <p className="text-muted">{t.emptyShelf}</p>
               <Link
-                href={`/${lang}`}
+                href={homeHref(lang)}
                 className="mt-5 rounded-full bg-gradient-to-b from-[#ecc677] to-[#c8913a] px-6 py-2.5 font-bold text-[#1f1b16] shadow transition hover:brightness-110"
               >
                 {t.browse}
@@ -160,7 +161,7 @@ export default function MyLibrary({ lang, t }: { lang: string; t: Dictionary }) 
             <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 md:grid-cols-4">
               {shelf.map((b) => (
                 <div key={b.id} className="group relative">
-                  <Link href={`/${lang}/book/${b.id}`} className="flex flex-col gap-3">
+                  <Link href={bookHref(lang, b.id)} className="flex flex-col gap-3">
                     <div className="relative transition duration-300 group-hover:-translate-y-1.5">
                       <BookCover book={b} />
                       {b.status && (
@@ -204,7 +205,7 @@ export default function MyLibrary({ lang, t }: { lang: string; t: Dictionary }) 
                     <div className="min-w-0 text-sm">
                       <p className="leading-snug">
                         {t.activity[a.type]}{" "}
-                        <Link href={`/${lang}/book/${a.bookId}`} className="font-semibold hover:text-gold">
+                        <Link href={bookHref(lang, a.bookId)} className="font-semibold hover:text-gold">
                           «<bdi>{b?.title ?? a.bookId}</bdi>»
                         </Link>
                         {a.type === "download" && a.detail ? ` ${t.asFormat} ${a.detail}` : ""}

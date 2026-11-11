@@ -90,6 +90,8 @@ export function DownloadLink({
   return (
     <a
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       className={className}
       onClick={() => {
         recordDownload(book, format);

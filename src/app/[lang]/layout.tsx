@@ -11,6 +11,7 @@ import Toaster from "@/components/Toaster";
 import { themeInitScript } from "@/lib/theme";
 import { dirOf, isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { homeHref } from "@/lib/links";
 import "../globals.css";
 
 const display = El_Messiri({ subsets: ["arabic", "latin"], variable: "--font-display" });
@@ -49,7 +50,7 @@ export default async function LangLayout({ children, params }: Props) {
       <body className={`${display.variable} ${body.variable} flex min-h-screen flex-col antialiased`}>
         <header className="sticky top-0 z-30 border-b border-white/10 bg-forest/85 text-[#f1ebe0] backdrop-blur-md">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-            <Link href={`/${lang}`} className="group flex items-center gap-3">
+            <Link href={homeHref(lang)} className="group flex items-center gap-3">
               <Logo className="h-10 w-10 transition duration-500 group-hover:rotate-[-6deg] group-hover:scale-105" />
               <span className="flex flex-col leading-none">
                 <span className="font-display text-2xl font-bold">{t.siteName}</span>
